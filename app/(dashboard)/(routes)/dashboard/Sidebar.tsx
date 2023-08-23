@@ -48,7 +48,7 @@ const routes = [
     color: "text-orange-500",
   },
   {
-    label: "Music Generation",
+    label: "Audio Generation",
     icon: MusicIcon,
     href: "/music",
     color: "text-emerald-500",
@@ -84,7 +84,7 @@ const Sidebar = () => {
                   ? "text-white bg-white/10"
                   : "text-zinc-400"
               )}
-              href="route.href"
+              href={route.href}
               key={route.href}
             >
               <div className="flex items-center flex-1">

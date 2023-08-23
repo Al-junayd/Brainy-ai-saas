@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "@/components/ui/Navbar";
-import Sidebar from "./Sidebar";
+import Sidebar from "./(routes)/dashboard/Sidebar";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
