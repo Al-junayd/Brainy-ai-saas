@@ -11,6 +11,7 @@ import {
   MusicIcon,
   VideoIcon,
   SettingsIcon,
+  CodeIcon,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -42,22 +43,28 @@ const routes = [
     color: "text-pink-500",
   },
   {
+    label: "Audio Generation",
+    icon: MusicIcon,
+    href: "/audio",
+    color: "text-emerald-500",
+  },
+  {
     label: "Video Generation",
     icon: VideoIcon,
     href: "/video",
     color: "text-orange-500",
   },
   {
-    label: "Audio Generation",
-    icon: MusicIcon,
-    href: "/music",
-    color: "text-emerald-500",
+    label: "Code Generation",
+    icon: CodeIcon,
+    href: "/code",
+    color: "text-green-500",
   },
   {
     label: "Settings",
     icon: SettingsIcon,
     href: "/seetings",
-    color: "text-green-500",
+    color: "text-white",
   },
 ];
 
