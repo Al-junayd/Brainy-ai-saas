@@ -1,7 +1,7 @@
 import { checkApiLimit, incrementApiLimit } from "@/lib/api-limit";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { Configuration, OpenAIApi } from "openai";
+import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 // import { checkSubscription } from "@/lib/subscription";
 // import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 
@@ -11,11 +11,17 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+const instructionMessage: ChatCompletionRequestMessage = {
+  role: "system",
+  content:
+    "You are a code generator, you must answer only in markdown code snippets. Use code comments for explanation. You must explain the code wriiten., you must also find error in any code sent to you and give feedback on the error and the correct version",
+};
+
 export async function POST(req: Request) {
   try {
     const { userId } = auth();
     const body = await req.json();
-    const { prompt, amount = 1, resolution = "512x512" } = body;
+    const { messages } = body;
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -23,18 +29,12 @@ export async function POST(req: Request) {
 
     if (!configuration.apiKey) {
       return new NextResponse("OpenAI API Key not configured.", {
-        status: 500,
+        status: 300,
       });
     }
 
-    if (!prompt) {
-      return new NextResponse("prompt are required", { status: 400 });
-    }
-    if (!amount) {
-      return new NextResponse("amount are required", { status: 400 });
-    }
-    if (!resolution) {
-      return new NextResponse("resolution are required", { status: 400 });
+    if (!messages) {
+      return new NextResponse("Messages are required", { status: 400 });
     }
 
     const freeTrial = await checkApiLimit();
@@ -47,19 +47,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const response = await openai.createImage({
-      prompt,
-      n: parseInt(amount, 10),
-      size: resolution,
+    const response = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [instructionMessage, ...messages],
     });
 
     // if (!isPro) {
     await incrementApiLimit();
     // }
 
-    return NextResponse.json(response.data.data);
+    return NextResponse.json(response.data.choices[0].message);
   } catch (error) {
-    console.log("[IMAGE_ERROR]", error);
+    console.log("[CODE_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
