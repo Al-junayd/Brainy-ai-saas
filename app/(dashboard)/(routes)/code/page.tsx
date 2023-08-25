@@ -3,7 +3,7 @@
 import * as z from "zod";
 import axios from "axios";
 import { Heading } from "@/components/ui/Heading";
-import { LucideIcon, MessageSquare, Music, VideoIcon } from "lucide-react";
+import { Code, LucideIcon, MessageSquare } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,12 +11,17 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 
+import { formSchema } from "./constants";
+import { ChatCompletionRequestMessage } from "openai";
 import { Loader } from "@/components/ui/Loader";
 import { Empty } from "@/components/ui/Empty";
-import { formSchema } from "./constants";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import { BotAvatar } from "@/components/ui/BotAvatar";
+import { cn } from "@/lib/utils";
 
-const VideoPage = () => {
+const CodePage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -26,15 +31,20 @@ const VideoPage = () => {
 
   const isLoading = form.formState.isSubmitting;
   const router = useRouter();
-  const [video, setVideo] = useState<string>();
+  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setVideo(undefined);
-      const response = await axios.post("/api/video", values);
+      const userMessage: ChatCompletionRequestMessage = {
+        role: "user",
+        content: values.prompt,
+      };
+      const newMessages = [...messages, userMessage];
 
-      setVideo(response.data[0]);
-      console.log(response.data[0]);
-      // console.log(messages);
+      const response = await axios.post("/api/code", {
+        messages: newMessages,
+      });
+      setMessages((current) => [...current, userMessage, response.data]);
+      console.log(messages);
       form.reset();
     } catch (error: any) {
       console.log(error);
@@ -51,11 +61,11 @@ const VideoPage = () => {
   return (
     <div>
       <Heading
-        title="Video generation"
-        description="Turn your prompt into video."
-        icon={VideoIcon}
-        iconColor="text-orange-700"
-        bgColor="bg-orange-700/10"
+        title="Code Generation"
+        description="Generate code using desriptive text"
+        icon={Code}
+        iconColor="text-green-700"
+        bgColor="bg-green-700/10"
       />
 
       <div className="px-4 lg:px-8">
@@ -72,7 +82,7 @@ const VideoPage = () => {
                     <Input
                       className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent "
                       disabled={isLoading}
-                      placeholder="Type something to generate video"
+                      placeholder="Let me help you with your code"
                       {...field}
                     />
                   </FormControl>
@@ -88,24 +98,48 @@ const VideoPage = () => {
           </form>
         </Form>
       </div>
-      <div className="space-y-4 space-x-4 mx-8 mb-4">
+      <div className="space-y-4 space-x-4 mt-4">
         {isLoading && (
           <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
             <Loader />
           </div>
         )}
-        {!video && !isLoading && <Empty label="No Video Generated." />}
-        {video && (
-          <video
-            controls
-            className="w-9/12 aspect-video rounded-lg mt-8 border"
-          >
-            <source src={video} />
-          </video>
+        {messages.length === 0 && !isLoading && (
+          <Empty label="No conversation started." />
         )}
+        <div className="flex flex-col-reverse gap-y-4 mx-4  ">
+          {messages.map((message) => (
+            <div
+              key={message.content}
+              className={cn(
+                "p-4 w-auto flex items-start gap-x-8 rounded-lg",
+                message.role === "user"
+                  ? " self-end  border bg-violet-600/20 border-black/10"
+                  : "self-start bg-muted "
+              )}
+            >
+              {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
+              <ReactMarkdown
+                components={{
+                  pre: ({ node, ...props }) => (
+                    <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                      <pre {...props} />
+                    </div>
+                  ),
+                  code: ({ node, ...props }) => (
+                    <code className="bg-black/10 rounded-lg p-1" {...props} />
+                  ),
+                }}
+                className="text-sm overflow-hidden leading-7"
+              >
+                {message.content || ""}
+              </ReactMarkdown>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
 
-export default VideoPage;
+export default CodePage;
