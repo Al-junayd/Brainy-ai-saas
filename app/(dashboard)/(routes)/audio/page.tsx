@@ -15,8 +15,11 @@ import { useRouter } from "next/navigation";
 import { Loader } from "@/components/ui/Loader";
 import { Empty } from "@/components/ui/Empty";
 import { formSchema } from "./constants";
+import { useProModal } from "@/hooks/useProModal";
 
 const AudioPage = () => {
+  const proModal = useProModal();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,11 +40,11 @@ const AudioPage = () => {
       form.reset();
     } catch (error: any) {
       console.log(error);
-      // if (error?.response?.status === 403) {
-      //   proModal.onOpen();
-      // } else {
-      //   toast.error("Something went wrong.");
-      // }
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        // toast.error("Something went wrong.");
+      }
     } finally {
       router.refresh();
     }

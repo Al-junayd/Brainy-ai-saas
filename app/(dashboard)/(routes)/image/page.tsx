@@ -27,8 +27,11 @@ import { cn } from "@/lib/utils";
 import { amountOptions, formSchema, resolutionOptions } from "../constants";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
+import { useProModal } from "@/hooks/useProModal";
 
 const ImagePage = () => {
+  const proModal = useProModal();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,11 +55,11 @@ const ImagePage = () => {
       form.reset();
     } catch (error: any) {
       console.log(error);
-      // if (error?.response?.status === 403) {
-      //   proModal.onOpen();
-      // } else {
-      //   toast.error("Something went wrong.");
-      // }
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        // toast.error("Something went wrong.");
+      }
     } finally {
       router.refresh();
     }

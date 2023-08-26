@@ -19,8 +19,11 @@ import { Empty } from "@/components/ui/Empty";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import { BotAvatar } from "@/components/ui/BotAvatar";
 import { cn } from "@/lib/utils";
+import { ProModal } from "../../../../components/ui/ProModal";
+import { useProModal } from "@/hooks/useProModal";
 
 const ConversationPage = () => {
+  const proModal = useProModal();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,11 +50,11 @@ const ConversationPage = () => {
       form.reset();
     } catch (error: any) {
       console.log(error);
-      // if (error?.response?.status === 403) {
-      //   proModal.onOpen();
-      // } else {
-      //   toast.error("Something went wrong.");
-      // }
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        // toast.error("Something went wrong.");
+      }
     } finally {
       router.refresh();
     }

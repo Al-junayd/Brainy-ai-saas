@@ -9,6 +9,7 @@ datasource db {
 }
 
 
+
 model UserApiLimit {
   id        String      @id @default(cuid())
   userId    String   @unique
