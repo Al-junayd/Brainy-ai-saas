@@ -21,6 +21,7 @@ import { UserAvatar } from "@/components/ui/UserAvatar";
 import { BotAvatar } from "@/components/ui/BotAvatar";
 import { cn } from "@/lib/utils";
 import { useProModal } from "@/hooks/useProModal";
+import toast from "react-hot-toast";
 
 const CodePage = () => {
   const proModal = useProModal();
@@ -53,7 +54,7 @@ const CodePage = () => {
       if (error?.response?.status === 403) {
         proModal.onOpen();
       } else {
-        // toast.error("Something went wrong.");
+        toast.error("Something went wrong.");
       }
     } finally {
       router.refresh();

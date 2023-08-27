@@ -7,12 +7,12 @@ import { Progress } from "./progress";
 import { useProModal } from "@/hooks/useProModal";
 
 interface freeCounterProps {
-  // isPro: boolean;
+  isPro: boolean;
   apiLimitCount: number;
 }
 
 export const FreeCounter = ({
-  // isPro = false,
+  isPro = false,
   apiLimitCount = 0,
 }: freeCounterProps) => {
   const [mounted, setMounted] = useState(false);
@@ -26,9 +26,9 @@ export const FreeCounter = ({
     return null;
   }
 
-  // if (isPro) {
-  //   return null;
-  // }
+  if (isPro) {
+    return null;
+  }
 
   return (
     <div className="px-3 mt-32">
