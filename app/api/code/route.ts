@@ -3,7 +3,6 @@ import { checkSubscription } from "@/lib/subscription";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
-// import { checkSubscription } from "@/lib/subscription";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -29,7 +28,7 @@ export async function POST(req: Request) {
 
     if (!configuration.apiKey) {
       return new NextResponse("OpenAI API Key not configured.", {
-        status: 300,
+        status: 500,
       });
     }
 

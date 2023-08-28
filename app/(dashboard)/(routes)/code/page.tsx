@@ -24,6 +24,7 @@ import { useProModal } from "@/hooks/useProModal";
 import toast from "react-hot-toast";
 
 const CodePage = () => {
+  const router = useRouter();
   const proModal = useProModal();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,7 +34,6 @@ const CodePage = () => {
   });
 
   const isLoading = form.formState.isSubmitting;
-  const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -47,7 +47,6 @@ const CodePage = () => {
         messages: newMessages,
       });
       setMessages((current) => [...current, userMessage, response.data]);
-      console.log(messages);
       form.reset();
     } catch (error: any) {
       console.log(error);
