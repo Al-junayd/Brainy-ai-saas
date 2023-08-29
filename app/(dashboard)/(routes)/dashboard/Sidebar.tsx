@@ -75,7 +75,7 @@ const routes = [
 interface sidebarProps {
   apiLimitCount: number;
   isPro: boolean;
-  isMobile: boolean;
+  isMobile?: boolean;
 }
 
 const Sidebar = ({
