@@ -18,6 +18,9 @@ import { usePathname } from "next/navigation";
 // internal imports
 import { Montserrat } from "next/font/google";
 import { FreeCounter } from "@/components/ui/FreeCounter";
+import { ProModal } from "@/components/ui/ProModal";
+import { useProModal } from "@/hooks/useProModal";
+import { Sheet, SheetClose, SheetTrigger } from "@/components/ui/sheet";
 
 const montserrat = Montserrat({
   weight: "600",
@@ -72,9 +75,14 @@ const routes = [
 interface sidebarProps {
   apiLimitCount: number;
   isPro: boolean;
+  isMobile: boolean;
 }
 
-const Sidebar = ({ apiLimitCount = 0, isPro = false }: sidebarProps) => {
+const Sidebar = ({
+  apiLimitCount = 0,
+  isPro = false,
+  isMobile = false,
+}: sidebarProps) => {
   const pathname = usePathname();
 
   return (
@@ -89,23 +97,43 @@ const Sidebar = ({ apiLimitCount = 0, isPro = false }: sidebarProps) => {
           </h1>
         </Link>
         <div className="space-y-1">
-          {routes.map((route) => (
-            <Link
-              className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
-                pathname === route.href
-                  ? "text-white bg-white/10"
-                  : "text-zinc-400"
-              )}
-              href={route.href}
-              key={route.href}
-            >
-              <div className="flex items-center flex-1">
-                <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
-                {route.label}
-              </div>
-            </Link>
-          ))}
+          {!isMobile &&
+            routes.map((route) => (
+              <Link
+                className={cn(
+                  "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                  pathname === route.href
+                    ? "text-white bg-white/10"
+                    : "text-zinc-400"
+                )}
+                href={route.href}
+                key={route.href}
+              >
+                <div className="flex items-center flex-1">
+                  <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                  {route.label}
+                </div>
+              </Link>
+            ))}
+          {isMobile &&
+            routes.map((route) => (
+              <SheetClose key={route.href} asChild>
+                <Link
+                  className={cn(
+                    "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-white hover:bg-white/10 rounded-lg transition",
+                    pathname === route.href
+                      ? "text-white bg-white/10"
+                      : "text-zinc-400"
+                  )}
+                  href={route.href}
+                >
+                  <div className="flex items-center flex-1">
+                    <route.icon className={cn("h-5 w-5 mr-3", route.color)} />
+                    {route.label}
+                  </div>
+                </Link>
+              </SheetClose>
+            ))}
         </div>
         <FreeCounter isPro={isPro} apiLimitCount={apiLimitCount} />
       </div>

@@ -3,7 +3,12 @@
 import { Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import Sidebar from "@/app/(dashboard)/(routes)/dashboard/Sidebar";
 import { useEffect, useState } from "react";
 
@@ -34,7 +39,7 @@ const MobileSidebar = ({
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0">
-        <Sidebar isPro={isPro} apiLimitCount={apiLimitCount} />
+        <Sidebar isMobile={true} isPro={isPro} apiLimitCount={apiLimitCount} />
       </SheetContent>
     </Sheet>
   );
